@@ -7,15 +7,32 @@ import org.springframework.stereotype.Service;
 import com.agribuy.dto.RegisterRequest;
 import com.agribuy.entity.User;
 import com.agribuy.repository.UserRepository;
+import com.agribuy.dto.LoginRequest;
+
+import java.time.LocalDateTime;
+import java.util.Random;
+
+import com.agribuy.dto.SendOtpRequest;
+import com.agribuy.entity.OtpVerification;
+
+import com.agribuy.repository.OtpRepository;
+
+import com.agribuy.dto.VerifyOtpRequest;
+
+import com.agribuy.dto.ResetPasswordRequest;
 
 @Service
 public class AuthService {
 
     private final UserRepository userRepository;
+    private final OtpRepository otpRepository;
 
-    public AuthService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    public AuthService(UserRepository userRepository,
+            OtpRepository otpRepository) {
+
+	this.userRepository = userRepository;
+	this.otpRepository = otpRepository;
+	}
 
     public String register(RegisterRequest request) {
 
@@ -41,4 +58,89 @@ public class AuthService {
 
         return "User Registered Successfully";
     }
+    
+    public String login(LoginRequest request) {
+
+        User user = userRepository
+                .findByUsername(request.getUsername())
+                .orElse(null);
+
+        if (user == null) {
+            return "Invalid Username";
+        }
+
+        if (!user.getPassword().equals(request.getPassword())) {
+            return "Invalid Password";
+        }
+
+        return "Login Successful";
+    }
+    
+    public String sendOtp(SendOtpRequest request) {
+
+        User user = userRepository
+                .findByUsername(request.getUsername())
+                .orElse(null);
+
+        if (user == null) {
+            return "User Not Found";
+        }
+
+        String otp = String.valueOf(
+                100000 + new Random().nextInt(900000));
+
+        OtpVerification otpVerification =
+                new OtpVerification();
+
+        otpVerification.setUserId(user.getUserId());
+        otpVerification.setOtpCode(otp);
+        otpVerification.setVerified(false);
+        otpVerification.setCreatedDate(LocalDateTime.now());
+        otpVerification.setExpiryTime(
+                LocalDateTime.now().plusMinutes(5));
+
+        otpRepository.save(otpVerification);
+
+        return "OTP Generated : " + otp;
+    }
+    
+    public String verifyOtp(VerifyOtpRequest request) {
+
+        OtpVerification otp = otpRepository
+                .findByOtpCode(request.getOtpCode())
+                .orElse(null);
+
+        if (otp == null) {
+            return "Invalid OTP";
+        }
+
+        if (otp.getExpiryTime().isBefore(LocalDateTime.now())) {
+            return "OTP Expired";
+        }
+
+        otp.setVerified(true);
+
+        otpRepository.save(otp);
+
+        return "OTP Verified Successfully";
+    }
+    
+    public String resetPassword(ResetPasswordRequest request) {
+
+        User user = userRepository
+                .findByUsername(request.getUsername())
+                .orElse(null);
+
+        if (user == null) {
+            return "User Not Found";
+        }
+
+        user.setPassword(request.getNewPassword());
+
+        userRepository.save(user);
+
+        return "Password Reset Successfully";
+    }
+    
+    
 }
