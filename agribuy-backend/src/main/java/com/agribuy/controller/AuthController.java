@@ -8,6 +8,7 @@ import com.agribuy.dto.LoginRequest;
 import com.agribuy.dto.SendOtpRequest;
 import com.agribuy.dto.VerifyOtpRequest;
 import com.agribuy.dto.ResetPasswordRequest;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -19,8 +20,15 @@ public class AuthController {
         this.authService = authService;
     }
 
+//    @PostMapping("/register")
+//    public String register(@RequestBody RegisterRequest request) {
+//        return authService.register(request);
+//    }
+    
     @PostMapping("/register")
-    public String register(@RequestBody RegisterRequest request) {
+    public String register(
+            @Valid @RequestBody RegisterRequest request) {
+
         return authService.register(request);
     }
     
@@ -49,4 +57,6 @@ public class AuthController {
 
         return authService.resetPassword(request);
     }
+    
+    
 }

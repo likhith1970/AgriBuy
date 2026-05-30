@@ -21,17 +21,22 @@ import com.agribuy.dto.VerifyOtpRequest;
 
 import com.agribuy.dto.ResetPasswordRequest;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 @Service
 public class AuthService {
 
     private final UserRepository userRepository;
     private final OtpRepository otpRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     public AuthService(UserRepository userRepository,
-            OtpRepository otpRepository) {
+            OtpRepository otpRepository,
+            BCryptPasswordEncoder passwordEncoder) {
 
 	this.userRepository = userRepository;
 	this.otpRepository = otpRepository;
+	this.passwordEncoder = passwordEncoder;
 	}
 
     public String register(RegisterRequest request) {
@@ -47,7 +52,8 @@ public class AuthService {
         User user = new User();
 
         user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());
+//        user.setPassword(request.getPassword());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setEmail(request.getEmail());
         user.setPhoneNumber(request.getPhoneNumber());
         user.setRole(request.getRole());
@@ -69,7 +75,7 @@ public class AuthService {
             return "Invalid Username";
         }
 
-        if (!user.getPassword().equals(request.getPassword())) {
+        if (!passwordEncoder.matches(request.getPassword(),user.getPassword())) {
             return "Invalid Password";
         }
 
@@ -135,7 +141,7 @@ public class AuthService {
             return "User Not Found";
         }
 
-        user.setPassword(request.getNewPassword());
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
 
         userRepository.save(user);
 
