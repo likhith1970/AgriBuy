@@ -11,6 +11,7 @@ import com.agribuy.dto.ResetPasswordRequest;
 import jakarta.validation.Valid;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api/auth")
 public class AuthController {
 
