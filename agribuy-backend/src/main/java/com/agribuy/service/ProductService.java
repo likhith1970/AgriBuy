@@ -8,6 +8,7 @@ import com.agribuy.dto.ProductRequest;
 import com.agribuy.entity.Product;
 import com.agribuy.repository.ProductRepository;
 import java.util.List;
+import com.agribuy.dto.FarmerDashboardResponse;
 
 @Service
 public class ProductService {
@@ -78,5 +79,52 @@ public class ProductService {
         productRepository.deleteById(productId);
 
         return "Product Deleted Successfully";
+    }
+    
+    public FarmerDashboardResponse getDashboard(Long farmerId) {
+
+        List<Product> products =
+                productRepository.findByFarmerId(farmerId);
+
+        FarmerDashboardResponse response =
+                new FarmerDashboardResponse();
+
+        response.setTotalProducts((long) products.size());
+
+        double totalInventory =
+                products.stream()
+                        .mapToDouble(Product::getQuantity)
+                        .sum();
+
+        response.setTotalInventory(totalInventory);
+
+        double averagePrice =
+                products.stream()
+                        .mapToDouble(Product::getPrice)
+                        .average()
+                        .orElse(0);
+
+        response.setAveragePrice(averagePrice);
+        
+        long categoryCount =
+                products.stream()
+                        .map(Product::getCategory)
+                        .distinct()
+                        .count();
+
+        response.setCategoryCount(categoryCount);
+        
+        String highestPricedProduct =
+                products.stream()
+                        .max((p1, p2) ->
+                                Double.compare(
+                                        p1.getPrice(),
+                                        p2.getPrice()))
+                        .map(Product::getProductName)
+                        .orElse("N/A");
+
+        response.setHighestPricedProduct(highestPricedProduct);
+
+        return response;
     }
 }

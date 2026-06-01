@@ -6,6 +6,7 @@ import com.agribuy.dto.ProductRequest;
 import com.agribuy.service.ProductService;
 import java.util.List;
 import com.agribuy.entity.Product;
+import com.agribuy.dto.FarmerDashboardResponse;
 
 @RestController
 @RequestMapping("/api/products")
@@ -55,5 +56,12 @@ public class ProductController {
 
         return productService.deleteProduct(id);
 
+    }
+    
+    @GetMapping("/dashboard/{farmerId}")
+    public FarmerDashboardResponse getDashboard(
+            @PathVariable Long farmerId) {
+
+        return productService.getDashboard(farmerId);
     }
 }
