@@ -23,6 +23,8 @@ import com.agribuy.dto.ResetPasswordRequest;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import com.agribuy.dto.LoginResponse;
+
 @Service
 public class AuthService {
 
@@ -65,21 +67,30 @@ public class AuthService {
         return "User Registered Successfully";
     }
     
-    public String login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) {
 
         User user = userRepository
                 .findByUsername(request.getUsername())
                 .orElse(null);
 
         if (user == null) {
-            return "Invalid Username";
+            return new LoginResponse(
+                    "Invalid Username",
+                    null);
         }
 
-        if (!passwordEncoder.matches(request.getPassword(),user.getPassword())) {
-            return "Invalid Password";
+        if (!passwordEncoder.matches(
+                request.getPassword(),
+                user.getPassword())) {
+
+            return new LoginResponse(
+                    "Invalid Password",
+                    null);
         }
 
-        return "Login Successful";
+        return new LoginResponse(
+                "Login Successful",
+                user.getRole().name());
     }
     
     public String sendOtp(SendOtpRequest request) {

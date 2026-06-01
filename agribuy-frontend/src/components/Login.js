@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import api from "../api/ApiService";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
 
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -14,9 +16,23 @@ function Login() {
       username,
       password
     })
-    .then((response) => {
-      alert(response.data);
-    })
+	.then((response) => {
+
+	  alert(response.data.message);
+
+	  const role = response.data.role;
+
+	  if (role === "FARMER") {
+	    navigate("/farmer-dashboard");
+	  }
+	  else if (role === "DOMESTIC_BUYER") {
+	    navigate("/domestic-dashboard");
+	  }
+	  else if (role === "COMMERCIAL_BUYER") {
+	    navigate("/commercial-dashboard");
+	  }
+
+	})
     .catch((error) => {
       alert("Login Failed");
       console.error(error);

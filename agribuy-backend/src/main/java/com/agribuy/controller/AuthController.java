@@ -9,6 +9,7 @@ import com.agribuy.dto.SendOtpRequest;
 import com.agribuy.dto.VerifyOtpRequest;
 import com.agribuy.dto.ResetPasswordRequest;
 import jakarta.validation.Valid;
+import com.agribuy.dto.LoginResponse;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -34,7 +35,7 @@ public class AuthController {
     }
     
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequest request) {
+    public LoginResponse login(@RequestBody LoginRequest request) {
         return authService.login(request);
     }
     
