@@ -10,6 +10,7 @@ import com.agribuy.entity.Order;
 import com.agribuy.dto.UpdateOrderStatusRequest;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api/orders")
 public class OrderController {
 

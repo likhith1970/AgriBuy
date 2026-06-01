@@ -9,6 +9,7 @@ import com.agribuy.entity.Product;
 import com.agribuy.dto.FarmerDashboardResponse;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api/products")
 public class ProductController {
 

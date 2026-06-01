@@ -7,9 +7,10 @@ function ProductList() {
   useEffect(() => {
     api
       .get("/api/buyer/products")
-      .then((response) => {
-        setProducts(response.data);
-      })
+	  .then((response) => {
+	      console.log("Products API Response:", response.data);
+	      setProducts(response.data);
+	  })
       .catch((error) => {
         console.error("Error:", error);
       });
@@ -17,7 +18,7 @@ function ProductList() {
 
   return (
     <div>
-      <h2>AgriBuy Products</h2>
+      <h2>AgriBuy Products ({products.length})</h2>
 
       {products.map((product) => (
         <div key={product.productId}>

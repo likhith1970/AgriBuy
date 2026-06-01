@@ -6,8 +6,10 @@ import org.springframework.web.bind.annotation.*;
 
 import com.agribuy.entity.Product;
 import com.agribuy.service.BuyerService;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api/buyer/products")
 public class BuyerController {
 
