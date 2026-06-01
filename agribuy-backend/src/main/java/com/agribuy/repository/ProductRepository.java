@@ -11,5 +11,8 @@ extends JpaRepository<Product, Long> {
 
 List<Product> findByFarmerId(Long farmerId);
 
+List<Product> findByCategory(String category);
+
+List<Product> findByProductNameContainingIgnoreCase(String keyword);
 }
 
