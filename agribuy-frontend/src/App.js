@@ -10,6 +10,9 @@ import Orders from "./components/Orders";
 import FarmerDashboard from "./components/FarmerDashboard";
 import DomesticDashboard from "./components/DomesticDashboard";
 import CommercialDashboard from "./components/CommercialDashboard";
+import ForgotPassword from "./components/ForgotPassword";
+import VerifyOtp from "./components/VerifyOtp";
+import ResetPassword from "./components/ResetPassword";
 
 function App() {
   return (
@@ -22,7 +25,10 @@ function App() {
         <Link to="/products">Products</Link> |{" "}
 		<Link to="/add-product">Add Product</Link> |{" "}
 		<Link to="/place-order">Place Order</Link> |{" "}
-		<Link to="/orders">Orders</Link>
+		<Link to="/orders">Orders</Link> |{" "}
+		<Link to="/forgot-password">Forgot Password</Link> |{" "}
+		<Link to="/verify-otp">Verify OTP</Link> |{" "}
+		<Link to="/reset-password">Reset Password</Link>
       </nav>
 
       <Routes>
@@ -34,10 +40,11 @@ function App() {
 		<Route path="/place-order" element={<PlaceOrder />} />
 		<Route path="/orders" element={<Orders />} />
 		<Route path="/farmer-dashboard" element={<FarmerDashboard />} />
-
 		<Route path="/domestic-dashboard" element={<DomesticDashboard />} />
-
 		<Route path="/commercial-dashboard" element={<CommercialDashboard />} />
+		<Route path="/forgot-password" element={<ForgotPassword />} />
+		<Route path="/verify-otp" element={<VerifyOtp />} />
+		<Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
 
     </BrowserRouter>
