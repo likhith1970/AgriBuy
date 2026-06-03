@@ -1,152 +1,247 @@
 import React, { useState } from "react";
 import api from "../api/ApiService";
+import "./Register.css";
 
 function Register() {
 
   const [formData, setFormData] = useState({
     username: "",
     password: "",
+    confirmPassword: "",
     email: "",
     phoneNumber: "",
     role: "FARMER"
   });
 
+  const [errorMessage, setErrorMessage] = useState("");
+  const [registered, setRegistered] = useState(false);
+
   const handleChange = (e) => {
+
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+
   };
 
   const handleSubmit = (e) => {
 
     e.preventDefault();
 
-    console.log("Register button clicked");
-    console.log(formData);
+    setErrorMessage("");
 
-    api.post("/api/auth/register", formData)
-      .then((response) => {
+    if (
+      !formData.username ||
+      !formData.password ||
+      !formData.confirmPassword ||
+      !formData.phoneNumber
+    ) {
 
-        console.log("Success:", response);
+      setErrorMessage(
+        "Please fill all required fields to register successfully"
+      );
 
-        alert(response.data);
+      return;
+    }
 
-      })
-      .catch((error) => {
+    const passwordRegex =
+      /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$/;
 
-        console.log("FULL ERROR:", error);
+    if (!passwordRegex.test(formData.password)) {
 
-        if (error.response) {
+      setErrorMessage(
+        "Password must contain at least 8 characters, 1 uppercase letter, 1 number and 1 special character"
+      );
 
-          console.log("Status:", error.response.status);
-          console.log("Data:", error.response.data);
+      return;
+    }
 
-          alert(
-            "Error: " +
-            JSON.stringify(error.response.data)
-          );
+    if (
+      formData.password !==
+      formData.confirmPassword
+    ) {
 
-        } else {
+      setErrorMessage(
+        "Password and Confirm Password do not match"
+      );
 
-          alert("Network/CORS Error");
+      return;
+    }
 
-        }
+    api.post("/api/auth/register", {
 
-      });
+      username: formData.username,
+      password: formData.password,
+      email: formData.email,
+      phoneNumber: formData.phoneNumber,
+      role: formData.role
+
+    })
+    .then((response) => {
+
+      setRegistered(true);
+
+    })
+    .catch((error) => {
+
+      console.error(error);
+
+      setErrorMessage(
+        "Registration Failed"
+      );
+
+    });
 
   };
 
   return (
-    <div>
 
-      <h2>Register User</h2>
+    <div className="register-page">
 
-      <form onSubmit={handleSubmit}>
+      <div className="register-card">
 
-        <input
-          name="username"
-          placeholder="Username"
-          onChange={handleChange}
-        />
+        <h2>Create New Account</h2>
 
-        <br /><br />
+        {errorMessage && (
 
-        <input
-          name="password"
-          type="password"
-          placeholder="Password"
-          onChange={handleChange}
-        />
+          <div className="error-message">
+            {errorMessage}
+          </div>
 
-        <br /><br />
+        )}
 
-        <input
-          name="email"
-          placeholder="Email"
-          onChange={handleChange}
-        />
+        {!registered && (
 
-        <br /><br />
+          <form onSubmit={handleSubmit}>
 
-        <input
-          name="phoneNumber"
-          placeholder="Phone Number"
-          onChange={handleChange}
-        />
-
-        <br /><br />
-
-        <h4>Select Role</h4>
-
-        <div style={{ display: "flex", gap: "20px" }}>
-
-          <label>
             <input
-              type="radio"
-              name="role"
-              value="FARMER"
-              checked={formData.role === "FARMER"}
+              name="username"
+              placeholder="Username *"
+              value={formData.username}
               onChange={handleChange}
             />
-            Farmer
-          </label>
 
-          <label>
             <input
-              type="radio"
-              name="role"
-              value="DOMESTIC_BUYER"
-              checked={formData.role === "DOMESTIC_BUYER"}
+              type="password"
+              name="password"
+              placeholder="Password *"
+              value={formData.password}
               onChange={handleChange}
             />
-            Domestic Buyer
-          </label>
 
-          <label>
             <input
-              type="radio"
-              name="role"
-              value="COMMERCIAL_BUYER"
-              checked={formData.role === "COMMERCIAL_BUYER"}
+              type="password"
+              name="confirmPassword"
+              placeholder="Confirm Password *"
+              value={formData.confirmPassword}
               onChange={handleChange}
             />
-            Commercial Buyer
-          </label>
 
-        </div>
+            <input
+              name="email"
+              placeholder="Email (Optional)"
+              value={formData.email}
+              onChange={handleChange}
+            />
 
-        <br /><br />
+            <input
+              name="phoneNumber"
+              placeholder="Phone Number *"
+              value={formData.phoneNumber}
+              onChange={handleChange}
+            />
 
-        <button type="submit">
-          Register
-        </button>
+            <h4>Select Role</h4>
 
-      </form>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                gap: "20px",
+                marginBottom: "20px"
+              }}
+            >
+
+              <label>
+                <input
+                  type="radio"
+                  name="role"
+                  value="FARMER"
+                  checked={
+                    formData.role === "FARMER"
+                  }
+                  onChange={handleChange}
+                />
+                Farmer
+              </label>
+
+              <label>
+                <input
+                  type="radio"
+                  name="role"
+                  value="DOMESTIC_BUYER"
+                  checked={
+                    formData.role ===
+                    "DOMESTIC_BUYER"
+                  }
+                  onChange={handleChange}
+                />
+                Domestic Buyer
+              </label>
+
+              <label>
+                <input
+                  type="radio"
+                  name="role"
+                  value="COMMERCIAL_BUYER"
+                  checked={
+                    formData.role ===
+                    "COMMERCIAL_BUYER"
+                  }
+                  onChange={handleChange}
+                />
+                Commercial Buyer
+              </label>
+
+            </div>
+
+            <button type="submit">
+              Register
+            </button>
+
+          </form>
+
+        )}
+
+        {registered && (
+
+          <div>
+
+            <h3 className="success-message">
+              ✅ You successfully registered
+            </h3>
+
+            <a
+              href="/login"
+              style={{
+                color: "#2e7d32",
+                fontWeight: "bold",
+                textDecoration: "none"
+              }}
+            >
+              Click Here to Login to AgriBuy
+            </a>
+
+          </div>
+
+        )}
+
+      </div>
 
     </div>
-  );
 
+  );
 }
 
 export default Register;
